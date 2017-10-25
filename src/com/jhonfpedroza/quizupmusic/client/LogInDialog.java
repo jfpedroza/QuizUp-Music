@@ -4,11 +4,14 @@ import com.jhonfpedroza.quizupmusic.interfaces.QuizUpInterface;
 import com.jhonfpedroza.quizupmusic.models.User;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,7 +22,7 @@ public class LogInDialog extends JDialog {
     private JTextField txtHost;
     private JTextField txtName;
 
-    LogInDialog(QuizUpInterface quizUp) {
+    LogInDialog() {
 
         setContentPane(contentPane);
         setTitle("Iniciar sesión");
@@ -55,6 +58,8 @@ public class LogInDialog extends JDialog {
                 onCancel();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+        loadConfig();
     }
 
     private void onOK() {
@@ -69,8 +74,14 @@ public class LogInDialog extends JDialog {
 
             try {
                 QuizUpClient.quizUp = (QuizUpInterface) Naming.lookup("rmi://" + host + "/quizUp");
-                User user = QuizUpClient.quizUp.logIn(name);
-                JOptionPane.showMessageDialog(null, "Has iniciado sesión " + user.getName());
+                QuizUpClient.currentUser = QuizUpClient.quizUp.logIn(name);
+                saveConfig();
+
+                EventQueue.invokeLater(() -> {
+                    MainWindow window = new MainWindow();
+                    window.setVisible(true);
+                    //window.requestFocus();
+                });
             } catch (RemoteException | NotBoundException | MalformedURLException ex) {
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 Logger.getLogger(LogInDialog.class.getName()).log(Level.SEVERE, null, ex);
@@ -82,5 +93,54 @@ public class LogInDialog extends JDialog {
     private void onCancel() {
         // add your code here if necessary
         dispose();
+    }
+
+    private void loadConfig() {
+        File file = new File("config.properties");
+        if (file.exists()) {
+            InputStream in = null;
+
+            try {
+                in = new FileInputStream(file);
+
+                Properties prop = new Properties();
+                prop.load(in);
+                txtHost.setText(prop.getProperty("host"));
+                txtName.setText(prop.getProperty("name"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (in != null) {
+                    try {
+                        in.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
+    private void saveConfig() {
+        OutputStream out = null;
+        try {
+            out = new FileOutputStream("config.properties");
+            Properties prop = new Properties();
+            prop.setProperty("host", txtHost.getText());
+            prop.setProperty("name", txtName.getText());
+
+            prop.store(out, null);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

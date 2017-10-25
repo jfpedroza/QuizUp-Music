@@ -15,7 +15,7 @@ public class QuizUpServer {
             LocateRegistry.createRegistry(1099);
             QuizUpImplementation quizUp = new QuizUpImplementation();
             Naming.bind("quizUp", quizUp);
-            System.out.println("Server running!");
+            Logger.getLogger(QuizUpImplementation.class.getName()).log(Level.INFO, "Server running!");
         } catch (RemoteException | AlreadyBoundException | MalformedURLException ex) {
             Logger.getLogger(QuizUpServer.class.getName()).log(Level.SEVERE, null, ex);
         }

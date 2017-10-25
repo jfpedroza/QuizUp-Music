@@ -8,4 +8,5 @@ import java.rmi.RemoteException;
 public interface QuizUpInterface extends Remote {
 
     User logIn(String name) throws RemoteException;
+    void logOut(User user) throws RemoteException;
 }

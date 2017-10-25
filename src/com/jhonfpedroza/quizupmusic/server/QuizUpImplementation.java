@@ -7,6 +7,8 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class QuizUpImplementation extends UnicastRemoteObject implements QuizUpInterface {
 
@@ -23,7 +25,15 @@ public class QuizUpImplementation extends UnicastRemoteObject implements QuizUpI
         User user = new User(id, name);
         users.add(user);
 
-        System.out.println(name + " has logged in.");
+        Logger.getLogger(QuizUpImplementation.class.getName()).log(Level.INFO, name + " has logged in.");
         return user;
+    }
+
+    @Override
+    public void logOut(User user) throws RemoteException {
+        users.remove(user);
+
+        Logger.getLogger(QuizUpImplementation.class.getName()).log(Level.INFO, user.getName() + " has logged out.");
+        Logger.getLogger(QuizUpImplementation.class.getName()).log(Level.INFO, "User count: " + users.size());
     }
 }

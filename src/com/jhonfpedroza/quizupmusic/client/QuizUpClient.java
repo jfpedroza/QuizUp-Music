@@ -1,6 +1,7 @@
 package com.jhonfpedroza.quizupmusic.client;
 
 import com.jhonfpedroza.quizupmusic.interfaces.QuizUpInterface;
+import com.jhonfpedroza.quizupmusic.models.User;
 
 import javax.swing.*;
 import java.net.MalformedURLException;
@@ -13,6 +14,7 @@ import java.util.logging.Logger;
 public class QuizUpClient {
 
     static QuizUpInterface quizUp;
+    static User currentUser;
 
     public static void main(String[] args) {
         try {
@@ -30,7 +32,7 @@ public class QuizUpClient {
             }
             //</editor-fold>
 
-            new LogInDialog(quizUp).setVisible(true);
+            new LogInDialog().setVisible(true);
         } catch ( IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException | ClassNotFoundException ex) {
             Logger.getLogger(QuizUpClient.class.getName()).log(Level.SEVERE, null, ex);
         }

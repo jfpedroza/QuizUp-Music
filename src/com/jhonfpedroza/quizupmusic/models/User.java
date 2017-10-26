@@ -8,6 +8,8 @@ public class User implements Serializable {
 
     private String name;
 
+    private boolean logged;
+
     public User(int id) {
         this.id = id;
     }
@@ -15,6 +17,7 @@ public class User implements Serializable {
     public User(long id, String name) {
         this.id = id;
         this.name = name;
+        this.logged = false;
     }
 
     public long getId() {
@@ -23,6 +26,14 @@ public class User implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+    public boolean isLogged() {
+        return logged;
+    }
+
+    public void setLogged(boolean logged) {
+        this.logged = logged;
     }
 
     @Override

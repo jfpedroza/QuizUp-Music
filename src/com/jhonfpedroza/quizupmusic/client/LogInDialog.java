@@ -75,18 +75,23 @@ public class LogInDialog extends JDialog {
             try {
                 QuizUpClient.quizUp = (QuizUpInterface) Naming.lookup("rmi://" + host + "/quizUp");
                 QuizUpClient.currentUser = QuizUpClient.quizUp.logIn(name);
-                saveConfig();
+                if (QuizUpClient.currentUser != null) {
+                    saveConfig();
 
-                EventQueue.invokeLater(() -> {
-                    MainWindow window = new MainWindow();
-                    window.setVisible(true);
-                    //window.requestFocus();
-                });
+                    EventQueue.invokeLater(() -> {
+                        MainWindow window = new MainWindow();
+                        window.setVisible(true);
+                    });
+
+                    dispose();
+                } else {
+                    JOptionPane.showMessageDialog(this, "El usuario ya ha iniciado sesión", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             } catch (RemoteException | NotBoundException | MalformedURLException ex) {
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 Logger.getLogger(LogInDialog.class.getName()).log(Level.SEVERE, null, ex);
+                dispose();
             }
-            dispose();
         }
     }
 

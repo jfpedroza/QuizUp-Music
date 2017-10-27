@@ -10,8 +10,8 @@ public class GameCellRenderer implements ListCellRenderer {
     private JLabel p1Label;
     private JLabel p2Label;
 
-    private static final Color HIGHLIGHT_COLOR = new Color(0, 0, 174);
-    private static final Color NORMAL_COLOR = new Color(229, 229, 229);
+    private static final Color HIGHLIGHT_COLOR = new Color(0, 0, 255);
+    private static final Color NORMAL_COLOR = new Color(255, 255, 255);
 
     GameCellRenderer() {
     }
@@ -24,11 +24,11 @@ public class GameCellRenderer implements ListCellRenderer {
         p2Label.setText(game.getPlayer2().getName());
 
         if (isSelected) {
-            content.setBackground(Color.BLUE);
+            content.setBackground(HIGHLIGHT_COLOR);
             p1Label.setOpaque(true);
             p2Label.setOpaque(true);
         } else {
-            content.setBackground(Color.WHITE);
+            content.setBackground(NORMAL_COLOR);
             p1Label.setOpaque(false);
             p2Label.setOpaque(false);
         }

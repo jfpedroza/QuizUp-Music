@@ -6,7 +6,9 @@
       <xy x="20" y="20" width="322" height="109"/>
     </constraints>
     <properties/>
-    <border type="none"/>
+    <border type="line">
+      <color color="-11711155"/>
+    </border>
     <children>
       <hspacer id="c6f3b">
         <constraints>

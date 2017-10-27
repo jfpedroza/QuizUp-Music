@@ -29,6 +29,7 @@ public class MainWindow extends JFrame {
         setTitle("QuizUp Music");
         setMinimumSize(new Dimension(640, 480));
         setSize(new Dimension(800, 600));
+        setLocationRelativeTo(null);
 
         quizUp = QuizUpClient.quizUp;
         currentUser = QuizUpClient.currentUser;
@@ -56,7 +57,7 @@ public class MainWindow extends JFrame {
         });
 
         newGameButton.addActionListener(actionEvent -> {
-
+            new NewGameDialog().setVisible(true);
         });
 
         gameListPanel.addSelectionListener(gameDetailPanel::setGame);

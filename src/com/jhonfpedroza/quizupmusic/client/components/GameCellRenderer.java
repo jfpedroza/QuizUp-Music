@@ -28,7 +28,7 @@ public class GameCellRenderer implements ListCellRenderer {
             p1Label.setOpaque(true);
             p2Label.setOpaque(true);
         } else {
-            content.setBackground(Color.LIGHT_GRAY);
+            content.setBackground(Color.WHITE);
             p1Label.setOpaque(false);
             p2Label.setOpaque(false);
         }

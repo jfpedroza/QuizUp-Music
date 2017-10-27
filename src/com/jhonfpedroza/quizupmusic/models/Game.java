@@ -7,9 +7,9 @@ public class Game implements Serializable {
 
     private long id;
 
-    private User user1;
+    private User player1;
 
-    private User user2;
+    private User player2;
 
     private Date date;
 
@@ -17,10 +17,10 @@ public class Game implements Serializable {
         this.id = id;
     }
 
-    public Game(long id, User user1, User user2) {
+    public Game(long id, User player1, User player2) {
         this.id = id;
-        this.user1 = user1;
-        this.user2 = user2;
+        this.player1 = player1;
+        this.player2 = player2;
         this.date = new Date();
     }
 
@@ -28,12 +28,12 @@ public class Game implements Serializable {
         return id;
     }
 
-    public User getUser1() {
-        return user1;
+    public User getPlayer1() {
+        return player1;
     }
 
-    public User getUser2() {
-        return user2;
+    public User getPlayer2() {
+        return player2;
     }
 
     public Date getDate() {

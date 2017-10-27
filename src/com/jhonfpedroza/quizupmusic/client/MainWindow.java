@@ -1,5 +1,7 @@
 package com.jhonfpedroza.quizupmusic.client;
 
+import com.jhonfpedroza.quizupmusic.client.components.GameDetailPanel;
+import com.jhonfpedroza.quizupmusic.client.components.GameListPanel;
 import com.jhonfpedroza.quizupmusic.interfaces.QuizUpInterface;
 import com.jhonfpedroza.quizupmusic.models.User;
 
@@ -16,6 +18,9 @@ public class MainWindow extends JFrame {
     private JPanel contentPane;
     private JButton newGameButton;
     private JLabel nameLabel;
+    private JPanel contentPanel;
+    private GameListPanel gameListPanel;
+    private GameDetailPanel gameDetailPanel;
     private QuizUpInterface quizUp;
     private User currentUser;
 
@@ -31,6 +36,17 @@ public class MainWindow extends JFrame {
 
         initMenus();
 
+        contentPanel.setLayout(new GridLayout(0, 2));
+        gameListPanel = new GameListPanel(currentUser);
+        gameDetailPanel = new GameDetailPanel();
+        contentPanel.add(gameListPanel);
+        contentPanel.add(gameDetailPanel);
+
+        setListeners();
+    }
+
+    private void setListeners() {
+
         // call onExit() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -42,6 +58,8 @@ public class MainWindow extends JFrame {
         newGameButton.addActionListener(actionEvent -> {
 
         });
+
+        gameListPanel.addSelectionListener(gameDetailPanel::setGame);
     }
 
     private void onExit() {

@@ -1,6 +1,7 @@
 package com.jhonfpedroza.quizupmusic.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class User implements Serializable {
 
@@ -10,6 +11,8 @@ public class User implements Serializable {
 
     private boolean logged;
 
+    private ArrayList<Game> playedGames;
+
     public User(int id) {
         this.id = id;
     }
@@ -18,6 +21,7 @@ public class User implements Serializable {
         this.id = id;
         this.name = name;
         this.logged = false;
+        this.playedGames = new ArrayList<>();
     }
 
     public long getId() {
@@ -34,6 +38,14 @@ public class User implements Serializable {
 
     public void setLogged(boolean logged) {
         this.logged = logged;
+    }
+
+    public ArrayList<Game> getPlayedGames() {
+        return playedGames;
+    }
+
+    public void addGame(Game game) {
+        playedGames.add(game);
     }
 
     @Override

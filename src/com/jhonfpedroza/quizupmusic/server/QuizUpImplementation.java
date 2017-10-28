@@ -16,11 +16,13 @@ public class QuizUpImplementation extends UnicastRemoteObject implements QuizUpI
 
     private List<User> users;
     private List<User> dummies;
+    private List<Game> games;
 
     QuizUpImplementation() throws RemoteException {
         super();
         users = new ArrayList<>();
         dummies = new ArrayList<>();
+        games = new ArrayList<>();
 
         for (int i = 0; i < 10; i++) {
             long id = System.currentTimeMillis();
@@ -48,7 +50,7 @@ public class QuizUpImplementation extends UnicastRemoteObject implements QuizUpI
             user.setLogged(true);
             users.add(user);
             for (User dummy: dummies) {
-                user.addGame(new Game(System.currentTimeMillis(), user, dummy));
+                user.addGame(new Game(System.currentTimeMillis(), user, dummy, Game.Status.FINISHED));
             }
 
             Logger.getLogger(QuizUpImplementation.class.getName()).log(Level.INFO, "New user: " + name);
@@ -73,5 +75,12 @@ public class QuizUpImplementation extends UnicastRemoteObject implements QuizUpI
         users.stream().filter(User::isLogged).forEach(online::add);
 
         return online;
+    }
+
+    @Override
+    public Game challenge(User challenger, User challenged) throws RemoteException {
+        Game game = new Game(challenger, challenged, Game.Status.CHALLENGED);
+        games.add(game);
+        return game;
     }
 }

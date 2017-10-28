@@ -1,9 +1,8 @@
 package com.jhonfpedroza.quizupmusic.client;
 
-import com.jhonfpedroza.quizupmusic.client.components.GameCellRenderer;
-import com.jhonfpedroza.quizupmusic.client.components.OnlineUserCellRenderer;
+import com.jhonfpedroza.quizupmusic.client.components.OnlineUserRow;
+import com.jhonfpedroza.quizupmusic.client.components.OnlineUsersPanel;
 import com.jhonfpedroza.quizupmusic.interfaces.QuizUpInterface;
-import com.jhonfpedroza.quizupmusic.models.Game;
 import com.jhonfpedroza.quizupmusic.models.User;
 
 import javax.swing.*;
@@ -20,16 +19,17 @@ public class NewGameDialog extends JDialog {
     private JButton buttonCancel;
     private JButton refreshButton;
     private JButton randomButton;
-    private JList onlineList;
+    private JPanel usersPanel;
+    private JScrollPane usersScrollPane;
     private QuizUpInterface quizUp;
     private User currentUser;
+    private OnlineUsersPanel oup;
 
     NewGameDialog() {
         setContentPane(contentPane);
         setModal(true);
         setTitle("Nueva partida");
         setLocationRelativeTo(null);
-        pack();
         setResizable(false);
 
         quizUp = QuizUpClient.quizUp;
@@ -38,10 +38,11 @@ public class NewGameDialog extends JDialog {
         refreshButton.setIcon(ImageUtil.createImageIcon("img/refresh.png", 16, 16));
         randomButton.setIcon(ImageUtil.createImageIcon("img/random.png", 16, 16));
 
-        onlineList.setCellRenderer(new OnlineUserCellRenderer());
-
         setListeners();
+
         getOnlineUsers();
+
+        pack();
     }
 
     private void onCancel() {
@@ -52,8 +53,14 @@ public class NewGameDialog extends JDialog {
         try {
             ArrayList<User> onlineUsers = quizUp.getOnlineUsers();
             onlineUsers.remove(currentUser);
-            onlineList.setModel(new OnlineUsersModel(onlineUsers));
-            onlineList.repaint();
+            EventQueue.invokeLater(() -> {
+                usersPanel.removeAll();
+                oup = new OnlineUsersPanel(onlineUsers);
+                usersScrollPane = new JScrollPane(oup);
+                usersPanel.add(usersScrollPane, BorderLayout.CENTER);
+                usersPanel.revalidate();
+                usersPanel.repaint();
+            });
         } catch (RemoteException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -62,6 +69,8 @@ public class NewGameDialog extends JDialog {
     private void setListeners() {
         buttonCancel.addActionListener(e -> onCancel());
         refreshButton.addActionListener(e -> getOnlineUsers());
+        randomButton.addActionListener(e -> {
+        });
 
         // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -74,33 +83,4 @@ public class NewGameDialog extends JDialog {
         // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
-
-    private class OnlineUsersModel implements ListModel<User> {
-
-        ArrayList<User> users;
-
-        OnlineUsersModel(ArrayList<User> users) {
-            this.users = users;
-        }
-
-        @Override
-        public int getSize() {
-            return users.size();
-        }
-
-        @Override
-        public User getElementAt(int i) {
-            return users.get(i);
-        }
-
-        @Override
-        public void addListDataListener(ListDataListener listDataListener) {
-
-        }
-
-        @Override
-        public void removeListDataListener(ListDataListener listDataListener) {
-
-        }
-    };
 }

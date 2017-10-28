@@ -5,24 +5,21 @@ import com.jhonfpedroza.quizupmusic.models.User;
 import javax.swing.*;
 import java.awt.*;
 
-public class OnlineUserCellRenderer implements ListCellRenderer {
+public class OnlineUserRow extends JPanel {
     private JPanel content;
     private JButton challengeButton;
     private JLabel userNameLabel;
 
-    public OnlineUserCellRenderer() {
-    }
-
-    @Override
-    public Component getListCellRendererComponent(JList list, Object obj, int index, boolean isSelected, boolean cellHasFocus) {
-        User user = (User)obj;
+    OnlineUserRow(User user) {
 
         userNameLabel.setText(user.getName());
 
         challengeButton.addActionListener(actionEvent -> {
-
+            System.out.println("Challenge");
         });
 
-        return content;
+        setLayout(new BorderLayout());
+        add(content, BorderLayout.CENTER);
+        setMaximumSize(new Dimension(300, 40));
     }
 }

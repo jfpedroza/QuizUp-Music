@@ -4,6 +4,7 @@ import com.jhonfpedroza.quizupmusic.interfaces.QuizUpInterface;
 import com.jhonfpedroza.quizupmusic.models.User;
 
 import javax.swing.*;
+import java.awt.*;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -32,7 +33,7 @@ public class QuizUpClient {
             }
             //</editor-fold>
 
-            new LogInDialog().setVisible(true);
+            EventQueue.invokeLater(() -> new LogInDialog().setVisible(true));
         } catch ( IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException | ClassNotFoundException ex) {
             Logger.getLogger(QuizUpClient.class.getName()).log(Level.SEVERE, null, ex);
         }

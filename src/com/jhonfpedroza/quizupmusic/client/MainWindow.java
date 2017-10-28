@@ -104,8 +104,8 @@ public class MainWindow extends JFrame {
         protected Void doInBackground() throws Exception {
 
             while (!isCancelled()) {
-                Thread.sleep(1000);
-                System.out.println("Executing...");
+                Thread.sleep(3000);
+                //System.out.println("Executing...");
             }
 
             return null;

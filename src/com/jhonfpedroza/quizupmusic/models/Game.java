@@ -13,15 +13,26 @@ public class Game implements Serializable {
 
     private Date date;
 
+    private Status status;
+
     public Game(long id) {
         this.id = id;
     }
 
-    public Game(long id, User player1, User player2) {
+    public Game(long id, User player1, User player2, Status status) {
         this.id = id;
         this.player1 = player1;
         this.player2 = player2;
         this.date = new Date();
+        this.status = status;
+    }
+
+    public Game(User player1, User player2, Status status) {
+        this.id = System.currentTimeMillis();
+        this.player1 = player1;
+        this.player2 = player2;
+        this.date = new Date();
+        this.status = status;
     }
 
     public long getId() {
@@ -40,6 +51,14 @@ public class Game implements Serializable {
         return date;
     }
 
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -53,5 +72,12 @@ public class Game implements Serializable {
     @Override
     public int hashCode() {
         return (int) (id ^ (id >>> 32));
+    }
+
+    public enum Status {
+        CHALLENGED,
+        ACCEPTED,
+        ONGOING,
+        FINISHED
     }
 }

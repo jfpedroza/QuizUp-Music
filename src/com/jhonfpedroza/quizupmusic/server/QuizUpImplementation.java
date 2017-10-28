@@ -45,6 +45,7 @@ public class QuizUpImplementation extends UnicastRemoteObject implements QuizUpI
         } else {
             long id = System.currentTimeMillis();
             user = new User(id, name);
+            user.setLogged(true);
             users.add(user);
             for (User dummy: dummies) {
                 user.addGame(new Game(System.currentTimeMillis(), user, dummy));

@@ -79,7 +79,7 @@ public class NewGameDialog extends JDialog {
 
         ArrayList<User> users;
 
-        public OnlineUsersModel(ArrayList<User> users) {
+        OnlineUsersModel(ArrayList<User> users) {
             this.users = users;
         }
 

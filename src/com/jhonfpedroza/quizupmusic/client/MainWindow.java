@@ -23,6 +23,7 @@ public class MainWindow extends JFrame {
     private GameDetailPanel gameDetailPanel;
     private QuizUpInterface quizUp;
     private User currentUser;
+    private BackgroundTasks tasks;
 
     MainWindow() {
         setContentPane(contentPane);
@@ -44,6 +45,9 @@ public class MainWindow extends JFrame {
         contentPanel.add(gameDetailPanel);
 
         setListeners();
+
+        tasks = new BackgroundTasks();
+        tasks.execute();
     }
 
     private void setListeners() {
@@ -69,7 +73,10 @@ public class MainWindow extends JFrame {
         } catch (RemoteException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            tasks.cancel(true);
         }
+
         dispose();
     }
 
@@ -89,5 +96,19 @@ public class MainWindow extends JFrame {
         });
 
         fileMenu.add(exitItem);
+    }
+
+    private class BackgroundTasks extends SwingWorker<Void, Void> {
+
+        @Override
+        protected Void doInBackground() throws Exception {
+
+            while (!isCancelled()) {
+                Thread.sleep(1000);
+                System.out.println("Executing...");
+            }
+
+            return null;
+        }
     }
 }

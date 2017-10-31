@@ -1,0 +1,88 @@
+{
+  "questions":[
+      {
+        "id": 1,
+        "quest" : "¿Quién es el cantante principal de esta canción?",
+        "audio" : "/audios/Bonita.mp3",
+        "correctAnswer" : 0,
+        "answers":[
+          "J Balvin",
+          "Nicky Jam",
+          "Ozuna",
+          "Diomedes Diaz"
+          ]
+      },
+      {
+        "id": 2,
+        "quest" : "¿Cual es el nombre de esta reconocida canción en el mundo del perreo?",
+        "audio" : "/audios/Bonita.mp3",
+        "correctAnswer" : 0,
+        "answers":[
+          "Bonita",
+          "Se pone caliente cuando escucha este perreo",
+          "Ay Vamos",
+          "Criminal"
+          ]
+      },
+      {
+        "id": 3,
+        "quest" : "El cantautor colombiano Manuel Turizo lanzó el sencillo <<Besame>>, ¿En qué año?",
+        "audio" : "/audios/Besame.mp3",
+        "correctAnswer" : 0,
+        "answers":[
+          "2017",
+          "2016",
+          "2015",
+          "1957"
+          ]
+      },
+      {
+        "id": 4,
+        "quest" : "¿En que año se escuchó por primera vez el clasico 'Stand By Me' de Ben E. King?",
+        "audio" : "/audios/StandByMe.mp3",
+        "correctAnswer" : 0,
+        "answers":[
+          "1961",
+          "1959",
+          "1965",
+          "1957"
+          ]
+      },
+      {
+        "id": 5,
+        "quest" : "¿En que serie de la famosa saga de Dragon Ball escuchamos está canción?",
+        "audio" : "/audios/Mi_Corazon_Encantado.mp3",
+        "correctAnswer" : 0,
+        "answers":[
+          "Dragon Ball Z GT",
+          "Dragon Ball Z",
+          "Dragon Ball Z Kai",
+          "Dragon Ball Super"
+          ]
+      },
+      {
+        "id": 6,
+        "quest" : "Adivina el cantante...",
+        "audio" : "/audios/We_Will_Rock_You.mp3",
+        "correctAnswer" : 0,
+        "answers":[
+          "Queen",
+          "Led Zepellin",
+          "Michael Jackson",
+          "Clean Bandit"
+          ]
+      },
+      {
+        "id": 6,
+        "quest" : "Adivina el nombre...",
+        "audio" : "/audios/We_Will_Rock_You.mp3",
+        "correctAnswer" : 0,
+        "answers":[
+          "We Will Rock You",
+          "Bohemian Rhapsody",
+          "We Are The Champions",
+          "Symphony"
+          ]
+      }
+    ]
+}

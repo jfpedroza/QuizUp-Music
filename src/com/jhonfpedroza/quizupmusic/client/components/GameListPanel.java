@@ -20,6 +20,19 @@ public class GameListPanel extends JPanel {
         add(content, BorderLayout.CENTER);
 
         playedGames = user.getPlayedGames();
+        ListModel<Game> model = new AbstractListModel<Game>() {
+
+            @Override
+            public int getSize() {
+                return playedGames.size();
+            }
+
+            @Override
+            public Game getElementAt(int i) {
+                return playedGames.get(i);
+            }
+        };
+
         gameList.setModel(model);
         gameList.setCellRenderer(new GameCellRenderer());
     }
@@ -30,26 +43,4 @@ public class GameListPanel extends JPanel {
         });
     }
 
-    private ListModel<Game> model = new ListModel<Game>() {
-
-        @Override
-        public int getSize() {
-            return playedGames.size();
-        }
-
-        @Override
-        public Game getElementAt(int i) {
-            return playedGames.get(i);
-        }
-
-        @Override
-        public void addListDataListener(ListDataListener listDataListener) {
-
-        }
-
-        @Override
-        public void removeListDataListener(ListDataListener listDataListener) {
-
-        }
-    };
 }

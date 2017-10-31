@@ -3,14 +3,17 @@ package com.jhonfpedroza.quizupmusic.client;
 import com.jhonfpedroza.quizupmusic.client.components.GameDetailPanel;
 import com.jhonfpedroza.quizupmusic.client.components.GameListPanel;
 import com.jhonfpedroza.quizupmusic.interfaces.QuizUpInterface;
+import com.jhonfpedroza.quizupmusic.models.Game;
 import com.jhonfpedroza.quizupmusic.models.User;
 
 import javax.swing.*;
-import javax.swing.event.MenuKeyEvent;
-import javax.swing.event.MenuKeyListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,6 +27,8 @@ public class MainWindow extends JFrame {
     private QuizUpInterface quizUp;
     private User currentUser;
     private BackgroundTasks tasks;
+    private NewGameDialog newGameDialog;
+    private ArrayList<ChallengeDialog> challengeDialogs;
 
     MainWindow() {
         setContentPane(contentPane);
@@ -35,6 +40,7 @@ public class MainWindow extends JFrame {
         quizUp = QuizUpClient.quizUp;
         currentUser = QuizUpClient.currentUser;
         nameLabel.setText("Usuario: " + currentUser.getName());
+        challengeDialogs = new ArrayList<>();
 
         initMenus();
 
@@ -61,7 +67,9 @@ public class MainWindow extends JFrame {
         });
 
         newGameButton.addActionListener(actionEvent -> {
-            new NewGameDialog().setVisible(true);
+            newGameDialog = new NewGameDialog();
+            newGameDialog.setChallengeListener(MainWindow.this::onChallenge);
+            newGameDialog.setVisible(true);
         });
 
         gameListPanel.addSelectionListener(gameDetailPanel::setGame);
@@ -78,6 +86,39 @@ public class MainWindow extends JFrame {
         }
 
         dispose();
+    }
+
+    private void onChallenge(User user) {
+        try {
+            Game challenge = quizUp.challenge(currentUser, user);
+            tasks.watchGame(challenge, game -> {
+                if (game.getStatus() == Game.Status.ACCEPTED) {
+                    quizUp.setGameStatus(challenge, Game.Status.ONGOING);
+                    newGameDialog.dispose();
+                    JOptionPane.showMessageDialog(this, "Aquí debería abrise la ventana del juego");
+                } else {
+                    JOptionPane.showMessageDialog(this, "El reto a " + game.getPlayer2().getName() + " fue rechazado", "Reto rechadado", JOptionPane.INFORMATION_MESSAGE);
+                }
+            }, Game.Status.ACCEPTED, Game.Status.REJECTED);
+        } catch (RemoteException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    void acceptOrRejectChallenge(ChallengeDialog dialog, Game.Status status) {
+        try {
+            quizUp.setGameStatus(dialog.getGame(), status);
+            challengeDialogs.remove(dialog);
+            if (status == Game.Status.ACCEPTED) {
+                tasks.watchGame(dialog.getGame(), game -> {
+                    JOptionPane.showMessageDialog(this, "Aquí debería abrise la ventana del juego");
+                }, Game.Status.ONGOING);
+            }
+        } catch (RemoteException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void initMenus() {
@@ -98,17 +139,82 @@ public class MainWindow extends JFrame {
         fileMenu.add(exitItem);
     }
 
-    private class BackgroundTasks extends SwingWorker<Void, Void> {
+    private class BackgroundTasks extends SwingWorker<Void, Object> {
+
+        private List<WatchedGame> watchedGames;
+
+        BackgroundTasks() {
+            watchedGames = Collections.synchronizedList(new ArrayList<>());
+        }
+
+        void watchGame(Game game, WatchCallback callback, Game.Status... statuses) {
+            watchedGames.add(new WatchedGame(game, statuses, callback));
+        }
 
         @Override
         protected Void doInBackground() throws Exception {
 
             while (!isCancelled()) {
-                Thread.sleep(3000);
-                //System.out.println("Executing...");
+                Thread.sleep(1000);
+                try {
+                    processChallenges();
+                    processWatchedGames();
+                } catch (RemoteException ex) {
+                    JOptionPane.showMessageDialog(MainWindow.this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    Logger.getLogger(BackgroundTasks.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
 
             return null;
         }
+
+        @Override
+        protected void process(List<Object> list) {
+            for (Object object: list) {
+                if (object instanceof ChallengeDialog) {
+                    ((ChallengeDialog)object).setVisible(true);
+                }
+            }
+        }
+
+        private void processChallenges() throws RemoteException {
+            ArrayList<Game> challenges = quizUp.getChallenges(currentUser);
+            for (Game challenge: challenges) {
+                if (challengeDialogs.stream().anyMatch(challengeDialog -> challengeDialog.getGame().equals(challenge))) {
+                    continue;
+                }
+
+                ChallengeDialog dialog = new ChallengeDialog(MainWindow.this, challenge);
+                challengeDialogs.add(dialog);
+                publish(dialog);
+            }
+        }
+
+        private void processWatchedGames() throws RemoteException {
+            for (WatchedGame watchedGame: watchedGames) {
+                Game game = quizUp.getGame(watchedGame.game.getId());
+                if (Arrays.stream(watchedGame.statuses).anyMatch(status -> status == game.getStatus())) {
+                    watchedGame.callback.run(game);
+                    watchedGames.remove(watchedGame);
+                }
+            }
+        }
+    }
+
+    private class WatchedGame {
+        Game game;
+        Game.Status[] statuses;
+        WatchCallback callback;
+
+        WatchedGame(Game game, Game.Status[] statuses, WatchCallback callback) {
+            this.game = game;
+            this.statuses = statuses;
+            this.callback = callback;
+        }
+    }
+
+    private interface WatchCallback {
+
+        void run(Game game) throws RemoteException;
     }
 }

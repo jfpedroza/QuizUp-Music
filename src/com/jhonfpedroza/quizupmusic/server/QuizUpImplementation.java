@@ -14,6 +14,8 @@ import java.util.logging.Logger;
 
 public class QuizUpImplementation extends UnicastRemoteObject implements QuizUpInterface {
 
+    private static Logger logger = Logger.getLogger(QuizUpImplementation.class.getName());
+
     private List<User> users;
     private List<User> dummies;
     private List<Game> games;
@@ -39,7 +41,7 @@ public class QuizUpImplementation extends UnicastRemoteObject implements QuizUpI
         if (opt.isPresent()) {
             user = opt.get();
             if (user.isLogged()) {
-                Logger.getLogger(QuizUpImplementation.class.getName()).log(Level.WARNING, name + " is already logged in.");
+                logger.log(Level.WARNING, name + " is already logged in.");
                 return null;
             } else {
                 user.setLogged(true);
@@ -53,10 +55,10 @@ public class QuizUpImplementation extends UnicastRemoteObject implements QuizUpI
                 user.addGame(new Game(System.currentTimeMillis(), user, dummy, Game.Status.FINISHED));
             }
 
-            Logger.getLogger(QuizUpImplementation.class.getName()).log(Level.INFO, "New user: " + name);
+            logger.log(Level.INFO, "New user: " + name);
         }
 
-        Logger.getLogger(QuizUpImplementation.class.getName()).log(Level.INFO, name + " has logged in.");
+        logger.log(Level.INFO, name + " has logged in.");
         return user;
     }
 
@@ -65,8 +67,8 @@ public class QuizUpImplementation extends UnicastRemoteObject implements QuizUpI
         user = users.get(users.indexOf(user));
         user.setLogged(false);
 
-        Logger.getLogger(QuizUpImplementation.class.getName()).log(Level.INFO, user.getName() + " has logged out.");
-        Logger.getLogger(QuizUpImplementation.class.getName()).log(Level.INFO, "Online users: " + users.stream().filter(User::isLogged).count());
+        logger.log(Level.INFO, user.getName() + " has logged out.");
+        logger.log(Level.INFO, "Online users: " + users.stream().filter(User::isLogged).count());
     }
 
     @Override
@@ -81,6 +83,31 @@ public class QuizUpImplementation extends UnicastRemoteObject implements QuizUpI
     public Game challenge(User challenger, User challenged) throws RemoteException {
         Game game = new Game(challenger, challenged, Game.Status.CHALLENGED);
         games.add(game);
+
+        logger.log(Level.INFO, challenger.getName() + " challenged " + challenged.getName());
         return game;
+    }
+
+    @Override
+    public ArrayList<Game> getChallenges(User user) throws RemoteException {
+        ArrayList<Game> challenges = new ArrayList<>();
+        games.stream().filter(game -> game.getPlayer2().equals(user) && game.getStatus() == Game.Status.CHALLENGED).forEach(challenges::add);
+
+        return challenges;
+    }
+
+    @Override
+    public void setGameStatus(Game game, Game.Status status) throws RemoteException {
+        Optional<Game> opt = games.stream().filter(g -> g.equals(game)).findFirst();
+        opt.ifPresent(g -> {
+            logger.log(Level.INFO, String.format("Changing status of game (%s, %s vs %s) from %s to %s",
+                    g.getId(), g.getPlayer1().getName(), g.getPlayer2().getName(), g.getStatus(), status));
+            g.setStatus(status);
+        });
+    }
+
+    @Override
+    public Game getGame(long id) throws RemoteException {
+        return games.stream().filter(game -> game.getId() == id).findFirst().orElse(null);
     }
 }

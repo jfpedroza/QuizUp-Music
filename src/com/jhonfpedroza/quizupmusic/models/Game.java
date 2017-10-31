@@ -77,6 +77,7 @@ public class Game implements Serializable {
     public enum Status {
         CHALLENGED,
         ACCEPTED,
+        REJECTED,
         ONGOING,
         FINISHED
     }

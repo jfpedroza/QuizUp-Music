@@ -13,4 +13,7 @@ public interface QuizUpInterface extends Remote {
     void logOut(User user) throws RemoteException;
     ArrayList<User> getOnlineUsers() throws RemoteException;
     Game challenge(User challenger, User challenged) throws RemoteException;
+    ArrayList<Game> getChallenges(User user) throws RemoteException;
+    void setGameStatus(Game game, Game.Status status) throws RemoteException;
+    Game getGame(long id) throws RemoteException;
 }

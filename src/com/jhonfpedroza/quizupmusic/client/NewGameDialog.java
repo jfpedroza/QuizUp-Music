@@ -1,6 +1,5 @@
 package com.jhonfpedroza.quizupmusic.client;
 
-import com.jhonfpedroza.quizupmusic.client.components.OnlineUserRow;
 import com.jhonfpedroza.quizupmusic.client.components.OnlineUsersPanel;
 import com.jhonfpedroza.quizupmusic.interfaces.QuizUpInterface;
 import com.jhonfpedroza.quizupmusic.models.User;
@@ -11,6 +10,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,6 +24,7 @@ public class NewGameDialog extends JDialog {
     private QuizUpInterface quizUp;
     private User currentUser;
     private OnlineUsersPanel oup;
+    private Consumer<User> challengeListener;
 
     NewGameDialog() {
         setContentPane(contentPane);
@@ -60,6 +61,7 @@ public class NewGameDialog extends JDialog {
                 usersPanel.add(usersScrollPane, BorderLayout.CENTER);
                 usersPanel.revalidate();
                 usersPanel.repaint();
+                setOupListeners();
             });
         } catch (RemoteException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
@@ -82,5 +84,17 @@ public class NewGameDialog extends JDialog {
 
         // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+    }
+
+    private void setOupListeners() {
+        oup.addChallengeListener(user -> {
+            if (challengeListener != null) {
+                challengeListener.accept(user);
+            }
+        });
+    }
+
+    void setChallengeListener(Consumer<User> challengeListener) {
+        this.challengeListener = challengeListener;
     }
 }

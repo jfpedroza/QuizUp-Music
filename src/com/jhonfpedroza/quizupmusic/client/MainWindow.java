@@ -198,6 +198,7 @@ public class MainWindow extends JFrame {
                     continue;
                 }
 
+                logger.log(Level.INFO, "Challenge received from " + challenge.getPlayer1());
                 ChallengeDialog dialog = new ChallengeDialog(MainWindow.this, challenge);
                 challengeDialogs.add(dialog);
                 publish(dialog);
@@ -205,15 +206,19 @@ public class MainWindow extends JFrame {
         }
 
         private void processWatchedGames() throws RemoteException {
+            ArrayList<WatchedGame> toRemove = new ArrayList<>();
             for (WatchedGame watchedGame: watchedGames) {
                 Game game = quizUp.getGame(watchedGame.game.getId());
                 if (Arrays.stream(watchedGame.statuses).anyMatch(status -> status == game.getStatus())) {
                     logger.log(Level.INFO, String.format("Status match for game %s: %s, running callback", game, game.getStatus()));
                     watchedGame.game = game;
                     publish(watchedGame);
-                    watchedGames.remove(watchedGame);
+                    toRemove.add(watchedGame);
                 }
             }
+
+            watchedGames.removeAll(toRemove);
+            toRemove.clear();
         }
     }
 

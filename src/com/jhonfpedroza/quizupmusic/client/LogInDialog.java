@@ -1,7 +1,6 @@
 package com.jhonfpedroza.quizupmusic.client;
 
 import com.jhonfpedroza.quizupmusic.interfaces.QuizUpInterface;
-import com.jhonfpedroza.quizupmusic.models.User;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,7 +22,7 @@ public class LogInDialog extends JDialog {
     private JTextField txtName;
 
     LogInDialog() {
-        super((Frame) null);
+        super((Window) null);
         setContentPane(contentPane);
         setTitle("Iniciar sesión");
         setModal(true);

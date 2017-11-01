@@ -23,7 +23,7 @@ public class LogInDialog extends JDialog {
     private JTextField txtName;
 
     LogInDialog() {
-
+        super((Frame) null);
         setContentPane(contentPane);
         setTitle("Iniciar sesión");
         setModal(true);

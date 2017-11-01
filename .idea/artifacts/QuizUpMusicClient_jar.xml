@@ -3,6 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/QuizUpMusicClient_jar</output-path>
     <root id="archive" name="QuizUpMusic.jar">
       <element id="module-output" name="QuizUpMusic" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/gson-2.8.2.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

@@ -1,12 +1,21 @@
 package com.jhonfpedroza.quizupmusic.server;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.jhonfpedroza.quizupmusic.interfaces.QuizUpInterface;
 import com.jhonfpedroza.quizupmusic.models.Game;
+import com.jhonfpedroza.quizupmusic.models.Question;
 import com.jhonfpedroza.quizupmusic.models.User;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -19,6 +28,7 @@ public class QuizUpImplementation extends UnicastRemoteObject implements QuizUpI
     private List<User> users;
     private List<User> dummies;
     private List<Game> games;
+    private List<Question> questions;
 
     QuizUpImplementation() throws RemoteException {
         super();
@@ -31,6 +41,8 @@ public class QuizUpImplementation extends UnicastRemoteObject implements QuizUpI
             User user = new User(id, "Dummy " + (i + 1));
             dummies.add(user);
         }
+
+        questions = readQuestions();
     }
 
     @Override
@@ -100,14 +112,45 @@ public class QuizUpImplementation extends UnicastRemoteObject implements QuizUpI
     public void setGameStatus(Game game, Game.Status status) throws RemoteException {
         Optional<Game> opt = games.stream().filter(g -> g.equals(game)).findFirst();
         opt.ifPresent(g -> {
-            logger.log(Level.INFO, String.format("Changing status of game (%s, %s vs %s) from %s to %s",
-                    g.getId(), g.getPlayer1().getName(), g.getPlayer2().getName(), g.getStatus(), status));
+            logger.log(Level.INFO, String.format("Changing status of game %s from %s to %s", g, g.getStatus(), status));
             g.setStatus(status);
+            if (status == Game.Status.ONGOING) {
+                g.setQuestions(getRandomQuestions(7));
+            }
         });
     }
 
     @Override
     public Game getGame(long id) throws RemoteException {
         return games.stream().filter(game -> game.getId() == id).findFirst().orElse(null);
+    }
+
+    private List<Question> readQuestions() {
+        String path = "questions.json";
+        InputStream stream = QuizUpImplementation.class.getResourceAsStream(path);
+        if (stream != null) {
+            InputStreamReader reader = new InputStreamReader(stream, Charset.forName("UTF8"));
+            JsonObject json = new JsonParser().parse(reader).getAsJsonObject();
+            try {
+                reader.close();
+                JsonArray array = json.getAsJsonArray("questions");
+                return Question.readArray(array);
+            } catch (IOException ex) {
+                Logger.getLogger(QuizUpImplementation.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            System.err.println("Couldn't find file: " + path);
+        }
+
+        return null;
+    }
+
+    private ArrayList<Question> getRandomQuestions(int amount) {
+        ArrayList<Question> selected = new ArrayList<>();
+        ArrayList<Question> copy = new ArrayList<>(questions);
+        Collections.shuffle(copy);
+        copy.stream().limit(amount).forEach(selected::add);
+
+        return selected;
     }
 }

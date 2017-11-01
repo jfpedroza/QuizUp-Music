@@ -1,6 +1,7 @@
 package com.jhonfpedroza.quizupmusic.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Game implements Serializable {
@@ -15,6 +16,8 @@ public class Game implements Serializable {
 
     private Status status;
 
+    private ArrayList<Question> questions;
+
     public Game(long id) {
         this.id = id;
     }
@@ -25,6 +28,7 @@ public class Game implements Serializable {
         this.player2 = player2;
         this.date = new Date();
         this.status = status;
+        this.questions = null;
     }
 
     public Game(User player1, User player2, Status status) {
@@ -33,6 +37,7 @@ public class Game implements Serializable {
         this.player2 = player2;
         this.date = new Date();
         this.status = status;
+        this.questions = null;
     }
 
     public long getId() {
@@ -59,6 +64,14 @@ public class Game implements Serializable {
         this.status = status;
     }
 
+    public ArrayList<Question> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(ArrayList<Question> questions) {
+        this.questions = questions;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -72,6 +85,11 @@ public class Game implements Serializable {
     @Override
     public int hashCode() {
         return (int) (id ^ (id >>> 32));
+    }
+
+    @Override
+    public String toString() {
+        return String.format("(%s, %s vs %s)", getId(), getPlayer1(), getPlayer2());
     }
 
     public enum Status {

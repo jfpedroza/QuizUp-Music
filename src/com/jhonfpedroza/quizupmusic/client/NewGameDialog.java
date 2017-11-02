@@ -26,11 +26,11 @@ public class NewGameDialog extends JDialog {
     private OnlineUsersPanel oup;
     private Consumer<User> challengeListener;
 
-    NewGameDialog() {
+    NewGameDialog(MainWindow window) {
         setContentPane(contentPane);
         setModal(true);
         setTitle("Nueva partida");
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(window);
         setResizable(false);
 
         quizUp = QuizUpClient.quizUp;

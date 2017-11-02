@@ -67,7 +67,7 @@ public class MainWindow extends JFrame {
         });
 
         newGameButton.addActionListener(actionEvent -> {
-            newGameDialog = new NewGameDialog();
+            newGameDialog = new NewGameDialog(this);
             newGameDialog.setChallengeListener(MainWindow.this::onChallenge);
             newGameDialog.setVisible(true);
         });
@@ -95,9 +95,8 @@ public class MainWindow extends JFrame {
                 if (game.getStatus() == Game.Status.ACCEPTED) {
                     quizUp.setGameStatus(challenge, Game.Status.ONGOING);
                     newGameDialog.dispose();
-                    JOptionPane.showMessageDialog(this, "Aquí debería abrise la ventana del juego");
                     game = quizUp.getGame(game.getId());
-                    JOptionPane.showMessageDialog(this, game.getQuestions().get(0).getQuest());
+                    new GameWindow(this, game).setVisible(true);
                 } else {
                     JOptionPane.showMessageDialog(this, "El reto a " + game.getPlayer2().getName() + " fue rechazado", "Reto rechadado", JOptionPane.INFORMATION_MESSAGE);
                 }
@@ -114,8 +113,7 @@ public class MainWindow extends JFrame {
             challengeDialogs.remove(dialog);
             if (status == Game.Status.ACCEPTED) {
                 tasks.watchGame(dialog.getGame(), game -> {
-                    JOptionPane.showMessageDialog(this, "Aquí debería abrise la ventana del juego");
-                    JOptionPane.showMessageDialog(this, game.getQuestions().get(0).getQuest());
+                    new GameWindow(this, game).setVisible(true);
                 }, Game.Status.ONGOING);
             }
         } catch (RemoteException ex) {

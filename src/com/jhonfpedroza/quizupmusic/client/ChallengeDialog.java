@@ -17,7 +17,7 @@ public class ChallengeDialog extends JDialog {
         setContentPane(contentPane);
         getRootPane().setDefaultButton(buttonOK);
         setTitle("Nuevo reto");
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(mainWindow);
         setResizable(false);
         setModal(true);
 

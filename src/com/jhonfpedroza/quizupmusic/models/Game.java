@@ -3,6 +3,9 @@ package com.jhonfpedroza.quizupmusic.models;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Game implements Serializable {
 
@@ -18,6 +21,9 @@ public class Game implements Serializable {
 
     private ArrayList<Question> questions;
 
+    private HashMap<Question, QuestionAnswer> player1Answers;
+    private HashMap<Question, QuestionAnswer> player2Answers;
+
     public Game(long id) {
         this.id = id;
     }
@@ -29,15 +35,13 @@ public class Game implements Serializable {
         this.date = new Date();
         this.status = status;
         this.questions = null;
+        player1Answers = new HashMap<>();
+        player2Answers = new HashMap<>();
     }
 
     public Game(User player1, User player2, Status status) {
+        this(System.currentTimeMillis(), player1, player2, status);
         this.id = System.currentTimeMillis();
-        this.player1 = player1;
-        this.player2 = player2;
-        this.date = new Date();
-        this.status = status;
-        this.questions = null;
     }
 
     public long getId() {
@@ -72,6 +76,52 @@ public class Game implements Serializable {
         this.questions = questions;
     }
 
+    public HashMap<Question, QuestionAnswer> getPlayer1Answers() {
+        return player1Answers;
+    }
+
+    public HashMap<Question, QuestionAnswer> getPlayer2Answers() {
+        return player2Answers;
+    }
+
+    public void setAnswer(User player, Question question, Answer answer, long time) {
+        int points = 0;
+        if (question.getCorrectAnswer().equals(answer)) {
+            points = (int) time;
+        }
+
+        if (questions.get(questions.size() - 1).equals(question)) {
+            points *= 2;
+        }
+
+        QuestionAnswer questionAnswer = new QuestionAnswer(answer, points);
+        if (player.equals(player1)) {
+            player1Answers.put(question, questionAnswer);
+        } else if (player.equals(player2)) {
+            player2Answers.put(question, questionAnswer);
+        } else {
+            Logger.getLogger(Game.class.getName()).log(Level.WARNING, "Player " + player + " not found. P1 = " + player1 + ", P2 = " + player2);
+        }
+    }
+
+    public int getPoints(User player) {
+        HashMap<Question, QuestionAnswer> answers;
+        if (player.equals(player1)) {
+            answers = player1Answers;
+        } else if (player.equals(player2)) {
+            answers = player2Answers;
+        } else {
+            Logger.getLogger(Game.class.getName()).log(Level.WARNING, "Player " + player + " not found. P1 = " + player1 + ", P2 = " + player2);
+            return 0;
+        }
+
+        return answers.values().stream().mapToInt(questionAnswer -> questionAnswer.points).sum();
+    }
+
+    public boolean canBeFinished() {
+        return player1Answers.size() == questions.size() && player2Answers.size() == questions.size();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -98,5 +148,15 @@ public class Game implements Serializable {
         REJECTED,
         ONGOING,
         FINISHED
+    }
+
+    public class QuestionAnswer implements Serializable {
+        Answer answer;
+        int points;
+
+        public QuestionAnswer(Answer answer, int points) {
+            this.answer = answer;
+            this.points = points;
+        }
     }
 }

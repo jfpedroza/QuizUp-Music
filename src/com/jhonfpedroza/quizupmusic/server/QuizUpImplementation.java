@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.jhonfpedroza.quizupmusic.interfaces.QuizUpInterface;
+import com.jhonfpedroza.quizupmusic.models.Answer;
 import com.jhonfpedroza.quizupmusic.models.Game;
 import com.jhonfpedroza.quizupmusic.models.Question;
 import com.jhonfpedroza.quizupmusic.models.User;
@@ -14,10 +15,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,21 +24,13 @@ public class QuizUpImplementation extends UnicastRemoteObject implements QuizUpI
     private static Logger logger = Logger.getLogger(QuizUpImplementation.class.getName());
 
     private List<User> users;
-    private List<User> dummies;
     private List<Game> games;
     private List<Question> questions;
 
     QuizUpImplementation() throws RemoteException {
         super();
         users = new ArrayList<>();
-        dummies = new ArrayList<>();
         games = new ArrayList<>();
-
-        for (int i = 0; i < 10; i++) {
-            long id = System.currentTimeMillis();
-            User user = new User(id, "Dummy " + (i + 1));
-            dummies.add(user);
-        }
 
         questions = readQuestions();
     }
@@ -63,9 +53,6 @@ public class QuizUpImplementation extends UnicastRemoteObject implements QuizUpI
             user = new User(id, name);
             user.setLogged(true);
             users.add(user);
-            for (User dummy: dummies) {
-                user.addGame(new Game(System.currentTimeMillis(), user, dummy, Game.Status.FINISHED));
-            }
 
             logger.log(Level.INFO, "New user: " + name);
         }
@@ -123,6 +110,38 @@ public class QuizUpImplementation extends UnicastRemoteObject implements QuizUpI
     @Override
     public Game getGame(long id) throws RemoteException {
         return games.stream().filter(game -> game.getId() == id).findFirst().orElse(null);
+    }
+
+    @Override
+    public int setAnswer(Game game, User player, Question question, Answer answer, long time) {
+        Optional<Game> opt = games.stream().filter(g -> g.equals(game)).findFirst();
+        opt.ifPresent(g -> {
+            g.setAnswer(player, question, answer, time);
+        });
+
+        return opt.map(g -> g.getPoints(player)).orElse(0);
+    }
+
+    @Override
+    public void finishGame(Game game, User player) {
+        Optional<Game> opt = games.stream().filter(g -> g.equals(game)).findFirst();
+        opt.ifPresent(g -> {
+            if (g.canBeFinished()) {
+                g.setStatus(Game.Status.FINISHED);
+                users.stream().filter(user -> user.equals(g.getPlayer1()) || user.equals(g.getPlayer2())).forEach(user -> user.addGame(g));
+            }
+        });
+    }
+
+    @Override
+    public ArrayList<Game> getGameList(User player) throws RemoteException {
+        Optional<User> opt = users.stream().filter(user -> user.equals(player)).findFirst();
+        if (opt.isPresent()) {
+            return opt.get().getPlayedGames();
+        } else {
+            logger.log(Level.WARNING, "Player " + player + " not found");
+            throw new RemoteException("Player " + player + " not found");
+        }
     }
 
     private List<Question> readQuestions() {

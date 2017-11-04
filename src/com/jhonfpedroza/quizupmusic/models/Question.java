@@ -33,7 +33,7 @@ public class Question implements Serializable {
         answers = new ArrayList<>();
 
         for (int i = 0; i < answerArray.size(); i++) {
-            Answer answer = new Answer(System.currentTimeMillis(), answerArray.get(i).getAsString());
+            Answer answer = new Answer(i, answerArray.get(i).getAsString());
             if (i == caIndex) {
                 correctAnswer = answer;
             }

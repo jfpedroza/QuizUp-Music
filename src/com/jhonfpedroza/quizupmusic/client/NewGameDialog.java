@@ -64,7 +64,8 @@ public class NewGameDialog extends JDialog {
                 setOupListeners();
             });
         } catch (RemoteException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            Logger.getLogger(NewGameDialog.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

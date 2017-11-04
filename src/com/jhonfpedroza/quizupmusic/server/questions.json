@@ -83,6 +83,162 @@
         "We Are The Champions",
         "Symphony"
       ]
+    },
+    {
+      "id": 8,
+      "quest" : "Adivina el nombre de la versión en español de la siguiente canción...",
+      "audio" : "audios/Baby_I_Won_t.wav",
+      "correctAnswer" : 0,
+      "answers":[
+        "Me Rehuso",
+        "Baby no",
+        "Dale tiempo",
+        "Haciendolo"
+      ]
+    },
+    {
+      "id": 9,
+      "quest" : "Carlos Vives estrenó este 2017 su sencillo 'Robarte Un Beso' en dueto con un cantante muy pegado del momento. ¿Que cantante lo acompaña?",
+      "audio" : "audios/Robarte_un_Beso.wav",
+      "correctAnswer" : 0,
+      "answers":[
+        "Sebastian Yatra",
+        "Nicky Jam",
+        "Maluma",
+        "Bad Bunny"
+      ]
+    },
+    {
+      "id": 10,
+      "quest" : "Taste The Feeling, Más conocida como la canción de...",
+      "audio" : "audios/Taste_The_Feeling.wav",
+      "correctAnswer" : 0,
+      "answers":[
+        "Coca Cola",
+        "El año",
+        "El siglo",
+        "El momento"
+      ]
+    },
+    {
+      "id": 11,
+      "quest" : "Adivina el cantante...",
+      "audio" : "audios/Y_hubo_alguien.wav",
+      "correctAnswer" : 0,
+      "answers":[
+        "Marc Anthony",
+        "Tito Nieves",
+        "Maelo Ruiz",
+        "Gilberto Santa Rosa"
+      ]
+    },
+    {
+      "id": 12,
+      "quest" : "Kaleth Morales cantante y compositor colombiano, quien, en vida era apodado el 'Rey de la nueva ola'. ¿Cual es el nombre de está canción de su composición?",
+      "audio" : "audios/Derrotado_en_el_dolor.wav",
+      "correctAnswer" : 0,
+      "answers":[
+        "Derrotado en el dolor",
+        "Vivo en el limbo",
+        "El Guante",
+        "Siento que acabado estoy"
+      ]
+    },
+    {
+      "id": 13,
+      "quest" : "Diomedes Diaz, mas conocido en el mundo del vallenato como...",
+      "audio" : "audios/Has_Cambiado.wav",
+      "correctAnswer" : 0,
+      "answers":[
+        "El cacique de la junta",
+        "El cacique",
+        "El monstruo del vallenato",
+        "Diome"
+      ]
+    },
+    {
+      "id": 14,
+      "quest" : "'Muchas gracias' un tema del cantautor colombiano Diomedes Diaz dedicado a su fanaticada, ¿Que acordionero lo acompaña en esta interpretación?",
+      "audio" : "audios/Muchas_gracias.wav",
+      "correctAnswer" : 0,
+      "answers":[
+        "Ivan Zuleta",
+        "Juancho Rois",
+        "Álvaro López",
+        "Cocha Molina"
+      ]
+    },
+    {
+      "id": 15,
+      "quest" : "Kaleth Morales, Adivina el nombre de la canción...",
+      "audio" : "audios/Sombra_de_mi_Alma.wav",
+      "correctAnswer" : 0,
+      "answers":[
+        "Sombra de mi alma",
+        "Sabes que tuve que hacer",
+        "Noche triste",
+        "Vivo en el limbo"
+      ]
+    },
+    {
+      "id": 16,
+      "quest" : "Que precio tiene el cielo...",
+      "audio" : "audios/Que_Precio_Tiene_El_Cielo.wav",
+      "correctAnswer" : 0,
+      "answers":[
+        "Que alguien me lo diga",
+        "Que alguien me lo pida",
+        "Que alguien me lo venda",
+        "Que alguien me lo compre"
+      ]
+    },
+    {
+      "id": 17,
+      "quest" : "Diomedes Diaz a duo con...",
+      "audio" : "audios/Ven_Conmigo.wav",
+      "correctAnswer" : 0,
+      "answers":[
+        "Felipe Pelaez",
+        "Jorge Celendón",
+        "Silvestre Dangón",
+        "Martín Elias"
+      ]
+    },
+    {
+      "id": 18,
+      "quest" : "Adivina el cantante...",
+      "audio" : "audios/Por_el_resto_de_mi_vida.wav",
+      "correctAnswer" : 0,
+      "answers":[
+        "Andrés Cepeda",
+        "Maluma",
+        "Andrés Cabas",
+        "David Bisbal"
+      ]
+    },
+    {
+      "id": 19,
+      "quest" : "Clean Bandit feat. Zara Larsson interpretan...",
+      "audio" : "audios/Symphony.wav",
+      "correctAnswer" : 0,
+      "answers":[
+        "Symphony",
+        "Rhapsody",
+        "Harmony",
+        "Poetry"
+      ]
+    },
+    {
+      "id": 20,
+      "quest" : "Y donde está...",
+      "audio" : "audios/Mi_Gente.wav",
+      "correctAnswer" : 0,
+      "answers":[
+        "Mi Gente",
+        "Mi Barrio",
+        "Mi Libro",
+        "Mi Diente"
+      ]
     }
   ]
 }

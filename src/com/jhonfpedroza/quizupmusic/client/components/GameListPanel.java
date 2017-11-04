@@ -4,7 +4,6 @@ import com.jhonfpedroza.quizupmusic.models.Game;
 import com.jhonfpedroza.quizupmusic.models.User;
 
 import javax.swing.*;
-import javax.swing.event.ListDataListener;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.function.Consumer;
@@ -20,18 +19,7 @@ public class GameListPanel extends JPanel {
         add(content, BorderLayout.CENTER);
 
         playedGames = user.getPlayedGames();
-        ListModel<Game> model = new AbstractListModel<Game>() {
-
-            @Override
-            public int getSize() {
-                return playedGames.size();
-            }
-
-            @Override
-            public Game getElementAt(int i) {
-                return playedGames.get(i);
-            }
-        };
+        GameListModel model = new GameListModel(playedGames);
 
         gameList.setModel(model);
         gameList.setCellRenderer(new GameCellRenderer());
@@ -43,4 +31,29 @@ public class GameListPanel extends JPanel {
         });
     }
 
+    public void updateList(ArrayList<Game> games) {
+
+        playedGames = games;
+        GameListModel model = new GameListModel(playedGames);
+        gameList.setModel(model);
+    }
+
+    private class GameListModel extends AbstractListModel<Game> {
+
+        ArrayList<Game> games;
+
+        GameListModel(ArrayList<Game> games) {
+            this.games = games;
+        }
+
+        @Override
+        public int getSize() {
+            return games.size();
+        }
+
+        @Override
+        public Game getElementAt(int i) {
+            return games.get(i);
+        }
+    };
 }

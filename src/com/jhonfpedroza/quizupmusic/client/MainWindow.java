@@ -29,6 +29,7 @@ public class MainWindow extends JFrame {
     private BackgroundTasks tasks;
     private NewGameDialog newGameDialog;
     private ArrayList<ChallengeDialog> challengeDialogs;
+    private GameWindow gameWindow;
 
     MainWindow() {
         setContentPane(contentPane);
@@ -96,7 +97,8 @@ public class MainWindow extends JFrame {
                     quizUp.setGameStatus(challenge, Game.Status.ONGOING);
                     newGameDialog.dispose();
                     game = quizUp.getGame(game.getId());
-                    new GameWindow(this, game).setVisible(true);
+                    gameWindow = new GameWindow(this, game, endGameCallback, closeGameWindowCallback);
+                    gameWindow.setVisible(true);
                 } else {
                     JOptionPane.showMessageDialog(this, "El reto a " + game.getPlayer2().getName() + " fue rechazado", "Reto rechadado", JOptionPane.INFORMATION_MESSAGE);
                 }
@@ -113,7 +115,8 @@ public class MainWindow extends JFrame {
             challengeDialogs.remove(dialog);
             if (status == Game.Status.ACCEPTED) {
                 tasks.watchGame(dialog.getGame(), game -> {
-                    new GameWindow(this, game).setVisible(true);
+                    gameWindow = new GameWindow(this, game, endGameCallback, closeGameWindowCallback);
+                    gameWindow.setVisible(true);
                 }, Game.Status.ONGOING);
             }
         } catch (RemoteException ex) {
@@ -121,6 +124,23 @@ public class MainWindow extends JFrame {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    private WatchCallback endGameCallback = game -> {
+        tasks.watchGame(game, g -> {
+            gameWindow.setWinner(g);
+        }, Game.Status.FINISHED);
+    };
+
+    private Runnable closeGameWindowCallback = () -> {
+        ArrayList<Game> games = null;
+        try {
+            games = quizUp.getGameList(currentUser);
+            gameListPanel.updateList(games);
+        } catch (RemoteException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    };
 
     private void initMenus() {
 
@@ -158,7 +178,7 @@ public class MainWindow extends JFrame {
         protected Void doInBackground() throws Exception {
 
             while (!isCancelled()) {
-                Thread.sleep(1000);
+                Thread.sleep(700);
                 try {
                     processChallenges();
                     processWatchedGames();
@@ -236,7 +256,7 @@ public class MainWindow extends JFrame {
         }
     }
 
-    private interface WatchCallback {
+    interface WatchCallback {
 
         void run(Game game) throws RemoteException;
     }

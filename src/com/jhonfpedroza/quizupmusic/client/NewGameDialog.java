@@ -2,6 +2,7 @@ package com.jhonfpedroza.quizupmusic.client;
 
 import com.jhonfpedroza.quizupmusic.client.components.OnlineUsersPanel;
 import com.jhonfpedroza.quizupmusic.interfaces.QuizUpInterface;
+import com.jhonfpedroza.quizupmusic.models.Game;
 import com.jhonfpedroza.quizupmusic.models.User;
 
 import javax.swing.*;
@@ -25,6 +26,11 @@ public class NewGameDialog extends JDialog {
     private User currentUser;
     private OnlineUsersPanel oup;
     private Consumer<User> challengeListener;
+    private ImageIcon randomIcon;
+    private ImageIcon cancelIcon;
+    private boolean isSearchingGame;
+    private Game game;
+    private Consumer<Game> cancelRandomListener;
 
     NewGameDialog(MainWindow window) {
         setContentPane(contentPane);
@@ -36,8 +42,12 @@ public class NewGameDialog extends JDialog {
         quizUp = QuizUpClient.quizUp;
         currentUser = QuizUpClient.currentUser;
 
+        randomIcon = ImageUtil.createImageIcon("img/random.png", 16, 16);
+        cancelIcon = ImageUtil.createImageIcon("img/cancel.png", 16, 16);
+
         refreshButton.setIcon(ImageUtil.createImageIcon("img/refresh.png", 16, 16));
-        randomButton.setIcon(ImageUtil.createImageIcon("img/random.png", 16, 16));
+        randomButton.setIcon(randomIcon);
+        isSearchingGame = false;
 
         setListeners();
 
@@ -47,7 +57,14 @@ public class NewGameDialog extends JDialog {
     }
 
     private void onCancel() {
+        if (game != null) {
+            cancelRandomListener.accept(game);
+        }
         dispose();
+    }
+
+    void setGame(Game game) {
+        this.game = game;
     }
 
     private void getOnlineUsers() {
@@ -72,8 +89,6 @@ public class NewGameDialog extends JDialog {
     private void setListeners() {
         buttonCancel.addActionListener(e -> onCancel());
         refreshButton.addActionListener(e -> getOnlineUsers());
-        randomButton.addActionListener(e -> {
-        });
 
         // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -97,5 +112,22 @@ public class NewGameDialog extends JDialog {
 
     void setChallengeListener(Consumer<User> challengeListener) {
         this.challengeListener = challengeListener;
+    }
+
+    void setRandomListener(Runnable randomListener, Consumer<Game> cancelRandomListener) {
+        this.cancelRandomListener = cancelRandomListener;
+        randomButton.addActionListener(e -> {
+            if (!isSearchingGame) {
+                isSearchingGame = true;
+                randomListener.run();
+                randomButton.setIcon(cancelIcon);
+                randomButton.setText("Cancelar");
+            } else {
+                isSearchingGame = false;
+                cancelRandomListener.accept(game);
+                randomButton.setIcon(randomIcon);
+                randomButton.setText("Aleatorio");
+            }
+        });
     }
 }

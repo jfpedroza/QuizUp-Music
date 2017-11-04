@@ -70,6 +70,7 @@ public class MainWindow extends JFrame {
         newGameButton.addActionListener(actionEvent -> {
             newGameDialog = new NewGameDialog(this);
             newGameDialog.setChallengeListener(MainWindow.this::onChallenge);
+            newGameDialog.setRandomListener(MainWindow.this::onRandomGame, MainWindow.this::onCancelRandomGame);
             newGameDialog.setVisible(true);
         });
 
@@ -94,11 +95,7 @@ public class MainWindow extends JFrame {
             Game challenge = quizUp.challenge(currentUser, user);
             tasks.watchGame(challenge, game -> {
                 if (game.getStatus() == Game.Status.ACCEPTED) {
-                    quizUp.setGameStatus(challenge, Game.Status.ONGOING);
-                    newGameDialog.dispose();
-                    game = quizUp.getGame(game.getId());
-                    gameWindow = new GameWindow(this, game, endGameCallback, closeGameWindowCallback);
-                    gameWindow.setVisible(true);
+                    startGame(game);
                 } else {
                     JOptionPane.showMessageDialog(this, "El reto a " + game.getPlayer2().getName() + " fue rechazado", "Reto rechadado", JOptionPane.INFORMATION_MESSAGE);
                 }
@@ -107,6 +104,47 @@ public class MainWindow extends JFrame {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    private void onRandomGame() {
+        try {
+            Game random = quizUp.random(currentUser);
+            if (random.getStatus() == Game.Status.RANDOM) {
+                newGameDialog.setGame(random);
+                tasks.watchGame(random, game -> {
+                    if (game.getStatus() == Game.Status.ACCEPTED) {
+                        startGame(game);
+                    }
+                }, Game.Status.ACCEPTED, Game.Status.REJECTED);
+            } else {
+                tasks.watchGame(random, game -> {
+                    newGameDialog.dispose();
+                    gameWindow = new GameWindow(this, game, endGameCallback, closeGameWindowCallback);
+                    gameWindow.setVisible(true);
+                }, Game.Status.ONGOING);
+            }
+        } catch (RemoteException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void onCancelRandomGame(Game game) {
+        try {
+            quizUp.setGameStatus(game, Game.Status.REJECTED);
+        } catch (RemoteException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void startGame(Game game) throws RemoteException {
+
+        quizUp.setGameStatus(game, Game.Status.ONGOING);
+        newGameDialog.dispose();
+        game = quizUp.getGame(game.getId());
+        gameWindow = new GameWindow(this, game, endGameCallback, closeGameWindowCallback);
+        gameWindow.setVisible(true);
     }
 
     void acceptOrRejectChallenge(ChallengeDialog dialog, Game.Status status) {
@@ -132,7 +170,7 @@ public class MainWindow extends JFrame {
     };
 
     private Runnable closeGameWindowCallback = () -> {
-        ArrayList<Game> games = null;
+        ArrayList<Game> games;
         try {
             games = quizUp.getGameList(currentUser);
             gameListPanel.updateList(games);
@@ -178,7 +216,7 @@ public class MainWindow extends JFrame {
         protected Void doInBackground() throws Exception {
 
             while (!isCancelled()) {
-                Thread.sleep(700);
+                Thread.sleep(600);
                 try {
                     processChallenges();
                     processWatchedGames();
@@ -227,6 +265,7 @@ public class MainWindow extends JFrame {
             ArrayList<WatchedGame> toRemove = new ArrayList<>();
             for (WatchedGame watchedGame: watchedGames) {
                 Game game = quizUp.getGame(watchedGame.game.getId());
+                System.out.println(game.getStatus());
                 if (Arrays.stream(watchedGame.statuses).anyMatch(status -> status == game.getStatus())) {
                     logger.log(Level.INFO, String.format("Status match for game %s: %s, running callback", game, game.getStatus()));
                     watchedGame.game = game;

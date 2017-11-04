@@ -88,9 +88,25 @@ public class QuizUpImplementation extends UnicastRemoteObject implements QuizUpI
     }
 
     @Override
+    public Game random(User player) throws RemoteException {
+        Optional<Game> opt = games.stream().filter(g -> g.getStatus() == Game.Status.RANDOM).findFirst();
+        if (opt.isPresent()) {
+            opt.get().setPlayer2(player);
+            setGameStatus(opt.get(), Game.Status.ACCEPTED);
+            logger.log(Level.INFO, "Random match " + opt.get().toString());
+            return opt.get();
+        } else {
+            Game game = new Game(player, null, Game.Status.RANDOM);
+            games.add(game);
+            logger.log(Level.INFO, player.toString() + " is looking for a random game");
+            return game;
+        }
+    }
+
+    @Override
     public ArrayList<Game> getChallenges(User user) throws RemoteException {
         ArrayList<Game> challenges = new ArrayList<>();
-        games.stream().filter(game -> game.getPlayer2().equals(user) && game.getStatus() == Game.Status.CHALLENGED).forEach(challenges::add);
+        games.stream().filter(game -> game.getStatus() == Game.Status.CHALLENGED && game.getPlayer2().equals(user)).forEach(challenges::add);
 
         return challenges;
     }

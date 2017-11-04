@@ -37,7 +37,7 @@ public class GameWindow extends JDialog {
         super(window);
         setContentPane(contentPane);
         setTitle("Juego " + game.getPlayer1() + " vs " + game.getPlayer2());
-        setMinimumSize(new Dimension(300, 400));
+        setMinimumSize(new Dimension(320, 450));
         setModal(true);
         setLocationRelativeTo(window);
 

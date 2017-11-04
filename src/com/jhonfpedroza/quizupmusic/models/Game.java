@@ -122,6 +122,10 @@ public class Game implements Serializable {
         return player1Answers.size() == questions.size() && player2Answers.size() == questions.size();
     }
 
+    public void setPlayer2(User player2) {
+        this.player2 = player2;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -144,6 +148,7 @@ public class Game implements Serializable {
 
     public enum Status {
         CHALLENGED,
+        RANDOM,
         ACCEPTED,
         REJECTED,
         ONGOING,
@@ -154,7 +159,7 @@ public class Game implements Serializable {
         Answer answer;
         int points;
 
-        public QuestionAnswer(Answer answer, int points) {
+        QuestionAnswer(Answer answer, int points) {
             this.answer = answer;
             this.points = points;
         }
